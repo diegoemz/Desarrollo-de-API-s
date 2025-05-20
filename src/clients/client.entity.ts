@@ -1,5 +1,6 @@
 import { Entity, Column, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { IsEmail, IsNotEmpty } from 'class-validator';
+import { Product } from "src/products/product.entity";
 
 @Entity()
 export class ClientEntity {

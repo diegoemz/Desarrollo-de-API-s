@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './products/product.entity';
 import { ProductsModule } from './products/products.module';
+import { ClientsModule } from './clients/clients.module';
+import { ClientEntity } from './clients/client.entity';
 
 
 @Module({
@@ -13,10 +15,10 @@ import { ProductsModule } from './products/products.module';
       username: 'postgres',
       password: 'suser',
       database: 'apicurso',
-      entities: [Product],
+      entities: [Product, ClientEntity],
       synchronize: true,
     }), 
-    ProductsModule
+    ProductsModule, ClientsModule
   ]
 })
 export class AppModule {}
