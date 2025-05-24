@@ -4,6 +4,8 @@ import { Product } from './products/product.entity';
 import { ProductsModule } from './products/products.module';
 import { ClientsModule } from './clients/clients.module';
 import { ClientEntity } from './clients/client.entity';
+import { OrdersModule } from './orders/orders.module';
+import { Order } from './orders/order.entity';
 
 
 @Module({
@@ -15,10 +17,10 @@ import { ClientEntity } from './clients/client.entity';
       username: 'postgres',
       password: 'suser',
       database: 'apicurso',
-      entities: [Product, ClientEntity],
+      entities:  [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }), 
-    ProductsModule, ClientsModule
-  ]
+    ProductsModule, ClientsModule, OrdersModule,
+  ],
 })
 export class AppModule {}

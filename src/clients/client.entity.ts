@@ -1,6 +1,7 @@
 import { Entity, Column, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { IsEmail, IsNotEmpty } from 'class-validator';
 import { Product } from "src/products/product.entity";
+import { Order } from "src/orders/order.entity";
 
 @Entity()
 export class ClientEntity {
@@ -18,4 +19,8 @@ export class ClientEntity {
 
     @OneToMany(()=> Product, product => product.client)
     products: Product[];
+
+    //Agrego la otra relacion, si una orden pertenece a un cliente
+    @OneToMany(() => Order, (order) => order.client)
+    orders: Order[];
 }
