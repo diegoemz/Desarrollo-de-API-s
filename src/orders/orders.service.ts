@@ -1,49 +1,50 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from './order.entity';
-import { Product } from '../products/product.entity';
 import { ClientEntity } from 'src/clients/client.entity';
-import { In } from 'typeorm'; // esto se pone para: 
+import { Product } from 'src/products/product.entity';
 
 @Injectable()
 export class OrdersService {
-  constructor(
-    @InjectRepository(Order)
-    private orderRepo: Repository<Order>,
-    @InjectRepository(Product)
-    private productRepo: Repository<Product>,
-    @InjectRepository(ClientEntity)
-    private clientRepo: Repository<ClientEntity>,
-  ) {}
+    constructor(
+        @InjectRepository(Order)
+        private orderRepository: Repository<Order>,
 
-  async createOrder (clientId: number, productIds: number[]): Promise<Order>{
-    if (productIds.length === 0) {
-      throw new BadRequestException('Debe agregar al menos un producto');
+        @InjectRepository(ClientEntity)
+        private clientRepository: Repository<ClientEntity>,
+
+        @InjectRepository(Product)
+        private productRepository: Repository<Product>,
+    ) { }
+
+    async createOrder(clientId: number, productIds: number[]): Promise<Order> {
+        if (!productIds || productIds.length === 0) {
+            throw new BadRequestException('La orden debe tener al menos un producto');
+        }
+
+        const client = await this.clientRepository.findOne({ where: { id: clientId } });
+        if (!client) {
+            throw new NotFoundException(`Cliente con ID ${clientId} no encontrado`);
+        }
+
+        const products = await this.productRepository.findByIds(productIds);
+        if (products.length === 0) {
+            throw new BadRequestException('No se encontraron productos válidos');
+        }
+
+        const totalAmount = products.reduce((sum, product) => sum + parseFloat(product.precio.toString()), 0);
+
+        const newOrder = this.orderRepository.create({
+            client,
+            products,
+            totalAmount,
+        });
+
+        return this.orderRepository.save(newOrder);
     }
-    
-    const client = await this.clientRepo.findOneBy({id: clientId});
 
-    //Hay que hacer esto para dejarle claro a typescript que el campo client, no debe de estar null, sino da error
-    if(!client){
-        throw new BadRequestException('El cliente no fue encontrado')
+    async findAll(): Promise<Order[]> {
+        return this.orderRepository.find();
     }
-    const products = await this.productRepo.findBy({
-        id: In(productIds),
-    })
-
-    const totalAmount = products.reduce((sum, p) => sum + Number(p.precio), 0);
-
-    const order = this.orderRepo.create({
-      products,
-      client,
-      totalAmount,
-    });
-
-    return this.orderRepo.save(order);
-  }
-
-  findAll() {
-    return this.orderRepo.find({ relations: ['client', 'products'] });
-  }
 }

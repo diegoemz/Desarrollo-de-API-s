@@ -4,15 +4,22 @@ import { Product } from './product.entity';
 
 @Controller('products')
 export class ProductsController {
-    constructor(private readonly productsService: ProductsService){}
+  constructor(private readonly productsService: ProductsService) {}
 
-    @Post()
-    create(@Body() body:{nombre: string, precio: number, stock: number}): Promise<Product>{
-        return this.productsService.createProduct(body.nombre, body.precio, body.stock)
-    }
+  @Post()
+  create(
+    @Body() body: {
+      nombre: string;
+      precio: number;
+      stock: number;
+      clientId: number;
+    },
+  ): Promise<Product> {
+    return this.productsService.createProduct(body.nombre, body.precio, body.stock, body.clientId);
+  }
 
-    @Get()
-    findAllProducts(): Promise<Product[]>{
-        return this.productsService.findAllProducts()
-    }
+  @Get()
+  findAllProducts(): Promise<Product[]> {
+    return this.productsService.findAllProducts();
+  }
 }

@@ -1,21 +1,18 @@
-import { Controller, Post, Get, Body, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { CreateOrderDto } from './dto/create-order.dto/create-order.dto';
+import { Order } from './order.entity';
 
 @Controller('orders')
 export class OrdersController {
-    constructor(private ordersService: OrdersService){}
+    constructor(private readonly ordersService: OrdersService) {}
 
-    //defino mis decoradores para marcar mis metodos como endpoints
-
-    @Post()// este endpoint, espera que yo le meta info
-    @UsePipes(new ValidationPipe({whitelist: true}))
-    createOrder(@Body() body: {clientId: number; productIds: number[]}){
+    @Post()
+    async createOrder(@Body() body: { clientId: number; productIds: number[] }): Promise<Order> {
         return this.ordersService.createOrder(body.clientId, body.productIds);
     }
 
-    @Get() //decorador que me devuelve toda la info de mi endpoint get
-    findAll(){
+    @Get()
+    async findAllOrders(): Promise<Order[]> {
         return this.ordersService.findAll();
     }
 }

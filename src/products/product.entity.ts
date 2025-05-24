@@ -1,15 +1,16 @@
 import { ClientEntity } from "src/clients/client.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Comentario } from "src/comentarios/comentario.entity";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Product{
+export class Product {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
     nombre: string;
 
-    @Column('decimal', {precision: 10, scale: 2})
+    @Column('decimal', { precision: 10, scale: 2 })
     precio: number;
 
     @Column()
@@ -17,4 +18,7 @@ export class Product{
 
     @ManyToOne(() => ClientEntity, client => client.products)
     client: ClientEntity;
+
+    @OneToMany(() => Comentario, comentario => comentario.product)
+    comentarios: Comentario[];
 }

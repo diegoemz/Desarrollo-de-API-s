@@ -6,6 +6,8 @@ import { ClientsModule } from './clients/clients.module';
 import { ClientEntity } from './clients/client.entity';
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/order.entity';
+import { ReservasModule } from './reservas/reservas.module';
+import { ComentariosModule } from './comentarios/comentarios.module';
 
 
 @Module({
@@ -20,7 +22,7 @@ import { Order } from './orders/order.entity';
       entities:  [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }), 
-    ProductsModule, ClientsModule, OrdersModule,
+    ProductsModule, ClientsModule, OrdersModule, ReservasModule, ComentariosModule,
   ],
 })
 export class AppModule {}

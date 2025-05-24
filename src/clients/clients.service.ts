@@ -11,18 +11,15 @@ export class ClientsService {
   ) {}
 
   async createClient(name: string, email: string): Promise<ClientEntity> {
-    // Validar que el nombre no esté vacío
     if (!name || name.trim() === '') {
       throw new BadRequestException('El nombre no puede estar vacío');
     }
 
-    // Validar formato de email básico
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       throw new BadRequestException('El formato del email no es válido');
     }
 
-    // Verificar si el email ya existe
     const existingClient = await this.clientRepository.findOne({
       where: { email }
     });
@@ -31,7 +28,6 @@ export class ClientsService {
       throw new ConflictException('Ya existe un cliente con este email');
     }
 
-    // Crear y guardar el nuevo cliente
     const newClient = this.clientRepository.create({
       nombre: name.trim(),
       email: email.toLowerCase()
@@ -59,7 +55,6 @@ export class ClientsService {
   async updateClient(id: number, data: Partial<ClientEntity>): Promise<ClientEntity> {
     const client = await this.findById(id);
 
-    // Si se va a actualizar el email, verificar que sea único
     if (data.email && data.email !== client.email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(data.email)) {
@@ -75,7 +70,6 @@ export class ClientsService {
       }
     }
 
-    // Si se va a actualizar el nombre, verificar que no esté vacío
     if (data.nombre !== undefined && (!data.nombre || data.nombre.trim() === '')) {
       throw new BadRequestException('El nombre no puede estar vacío');
     }
